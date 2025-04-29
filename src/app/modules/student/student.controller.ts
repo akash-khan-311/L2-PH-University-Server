@@ -1,10 +1,14 @@
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 import { StudentServices } from "./student.service";
+import studentValidationSchema from "./student.validation";
+import { z } from "zod";
 
 const createStudent = async (req: Request, res: Response) => {
   try {
     const studentData = req.body.student;
-    const result = await StudentServices.createStudentIntoDB(studentData);
+    const validatedStudentData = studentValidationSchema.parse(studentData);
+    const result =
+      await StudentServices.createStudentIntoDB(validatedStudentData);
     if (result) {
       res.status(201).json({
         success: true,
@@ -13,7 +17,7 @@ const createStudent = async (req: Request, res: Response) => {
       });
     }
   } catch (error) {
-    console.error("Error creating student:", error);
+    console.log("Error creating student:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };

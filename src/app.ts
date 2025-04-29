@@ -11,8 +11,6 @@ app.use(cors());
 app.use("/api/v1/student", StudentRoutes);
 
 app.get("/", (req: Request, res: Response) => {
-  const name = "Akash Khan i live now ";
-
   res.send("Hello World! " + name);
 });
 
