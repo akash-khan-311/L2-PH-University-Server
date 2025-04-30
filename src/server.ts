@@ -10,8 +10,6 @@ async function main() {
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
   }
-
-  console.log("Connected to MongoDB");
 }
 
 app.listen(config.port, () => {

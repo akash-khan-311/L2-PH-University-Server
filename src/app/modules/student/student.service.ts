@@ -1,6 +1,6 @@
 import { TStudent } from "./student.interface";
 import { Student } from "./student.model";
-
+import { Types } from "mongoose";
 const createStudentIntoDB = async (studentData: TStudent) => {
   // Built in static method to create a new document in the collection
 
@@ -23,7 +23,8 @@ const getAllStudentsFromDB = async () => {
 
 const getSingleStudentFromDB = async (id: string) => {
   // const result = await Student.findById({ _id: id });
-  const result = await Student.aggregate([{ $match: { _id: id } }]);
+  const objectId = new Types.ObjectId(id);
+  const result = await Student.aggregate([{ $match: { _id: objectId } }]);
   return result;
 };
 const deleteStudentFromDb = async (id: string) => {
@@ -35,7 +36,7 @@ const deleteStudentFromDb = async (id: string) => {
 // update student details by id
 const updateStudentFromDb = async (
   id: string,
-  updatedData: Partial<TStudent>,
+  updatedData: Partial<TStudent>
 ) => {
   const existingStudent = await Student.findOne({ _id: id });
   if (!existingStudent) {
@@ -49,7 +50,7 @@ const updateStudentFromDb = async (
     });
     if (duplicate) {
       throw new Error(
-        "Student already exists with this email or contact number",
+        "Student already exists with this email or contact number"
       );
     }
     const updatedStudent = await Student.findByIdAndUpdate(id, updatedData, {

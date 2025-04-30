@@ -141,6 +141,7 @@ studentSchema.pre("find", function (next) {
 
 studentSchema.pre("aggregate", function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+
   next();
 });
 

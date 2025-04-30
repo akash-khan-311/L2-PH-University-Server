@@ -37,8 +37,8 @@ const getAllStudents = async (req: Request, res: Response) => {
 
 const getSingleStudent = async (req: Request, res: Response) => {
   try {
-    const studentId = req.params.id;
-    const result = await StudentServices.getSingleStudentFromDB(studentId);
+    const id = req.params.id;
+    const result = await StudentServices.getSingleStudentFromDB(id);
     if (result) {
       res.status(200).json({
         success: true,
