@@ -16,9 +16,9 @@ const createStudent = async (req: Request, res: Response) => {
         data: result,
       });
     }
-  } catch (error) {
-    console.log("Error creating student:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+  } catch (error: any) {
+    console.log(error.message || "Error creating student:", error);
+    res.status(500).json({ message: error.message || "Internal Server Error" });
   }
 };
 
@@ -34,7 +34,7 @@ const getAllStudents = async (req: Request, res: Response) => {
     }
   } catch (error) {
     console.error("Error fetching students:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error", error });
   }
 };
 

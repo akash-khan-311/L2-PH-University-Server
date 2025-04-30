@@ -1,13 +1,15 @@
-import { Schema, model, connect } from "mongoose";
+import { Schema, connect, model } from "mongoose";
 import validator from "validator";
 import {
-  Guardian,
-  LocalGuardian,
-  Student,
-  UserName,
+  TGuardian,
+  TLocalGuardian,
+  TStudent,
+  studentMethods,
+  StudentModel,
+  TUserName,
 } from "./student.interface";
 
-const userNameSchema = new Schema<UserName>({
+const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
     required: [true, "First Name Is Required"],
@@ -21,7 +23,7 @@ const userNameSchema = new Schema<UserName>({
   },
 });
 
-const guardianSchema = new Schema<Guardian>({
+const guardianSchema = new Schema<TGuardian>({
   fatherName: { type: String, required: [true, "Father Name Is Required"] },
   fatherOccupation: {
     type: String,
@@ -42,7 +44,7 @@ const guardianSchema = new Schema<Guardian>({
   },
 });
 
-const localGuardianSchema = new Schema<LocalGuardian>({
+const localGuardianSchema = new Schema<TLocalGuardian>({
   name: { type: String, required: [true, "Local Guardian Name is Required"] },
   occupation: {
     type: String,
@@ -59,7 +61,7 @@ const localGuardianSchema = new Schema<LocalGuardian>({
   },
 });
 
-const studentSchema = new Schema<Student>({
+const studentSchema = new Schema<TStudent, StudentModel, studentMethods>({
   name: {
     type: userNameSchema,
     required: [true, "Your Name Is Required"],
@@ -111,4 +113,14 @@ const studentSchema = new Schema<Student>({
   isActive: { type: String, enum: ["Active", "Blocked"], default: "Active" },
 });
 
-export const StudentModel = model<Student>("Student", studentSchema);
+studentSchema.methods.isExists = async function (
+  email: string,
+  contactNo: string
+) {
+  const student = await Student.findOne({
+    $or: [{ email }, { contactNo }],
+  });
+  return student;
+};
+
+export const Student = model<TStudent, StudentModel>("Student", studentSchema);
