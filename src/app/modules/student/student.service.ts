@@ -32,9 +32,38 @@ const deleteStudentFromDb = async (id: string) => {
   return result;
 };
 
+// update student details by id
+const updateStudentFromDb = async (
+  id: string,
+  updatedData: Partial<TStudent>,
+) => {
+  const existingStudent = await Student.findOne({ _id: id });
+  if (!existingStudent) {
+    throw new Error("Student not found");
+  }
+
+  if (updatedData?.email || updatedData?.contactNo) {
+    const duplicate = await Student.findOne({
+      _id: { $ne: id },
+      $or: [{ email: updatedData.email }, { contactNo: updatedData.contactNo }],
+    });
+    if (duplicate) {
+      throw new Error(
+        "Student already exists with this email or contact number",
+      );
+    }
+    const updatedStudent = await Student.findByIdAndUpdate(id, updatedData, {
+      new: true,
+      runValidators: true,
+    });
+    return updatedStudent;
+  }
+};
+
 export const StudentServices = {
   createStudentIntoDB,
   getAllStudentsFromDB,
   getSingleStudentFromDB,
   deleteStudentFromDb,
+  updateStudentFromDb,
 };

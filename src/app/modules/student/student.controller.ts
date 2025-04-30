@@ -1,7 +1,6 @@
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
 import { StudentServices } from "./student.service";
 import studentValidationSchema from "./student.validation";
-import { z } from "zod";
 
 const createStudent = async (req: Request, res: Response) => {
   try {
@@ -32,7 +31,6 @@ const getAllStudents = async (req: Request, res: Response) => {
       });
     }
   } catch (error) {
-    console.error("Error fetching students:", error);
     res.status(500).json({ message: "Internal Server Error", error });
   }
 };
@@ -51,8 +49,7 @@ const getSingleStudent = async (req: Request, res: Response) => {
       res.status(404).json({ message: "Student not found" });
     }
   } catch (error) {
-    console.error("Error fetching student:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error", error });
   }
 };
 
@@ -69,7 +66,29 @@ const deleteStudent = async (req: Request, res: Response) => {
       });
     }
   } catch (error: any) {
-    res.status(500).json({ message: error.message || "Internal Server Error" });
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
+  }
+};
+
+const updateStudent = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const updatedData = req.body;
+    const result = await StudentServices.updateStudentFromDb(id, updatedData);
+    if (result) {
+      res.status(200).json({
+        success: true,
+        message: "Student updated successfully",
+        data: result,
+      });
+    } else {
+      res.status(404).json({ message: "Student not found" });
+    }
+  } catch (error) {
+    res.status(400).json({ success: false, message: (error as Error).message });
   }
 };
 
@@ -78,4 +97,5 @@ export const StudentController = {
   getAllStudents,
   getSingleStudent,
   deleteStudent,
+  updateStudent,
 };
