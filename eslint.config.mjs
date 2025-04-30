@@ -30,7 +30,7 @@ export default defineConfig([
       "prefer-const": "error",
     },
   },
-  prettier,
+  ,
   {
     ignores: ["node_modules/**", "dist/**"],
   },

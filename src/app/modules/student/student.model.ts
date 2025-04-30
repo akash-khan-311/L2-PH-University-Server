@@ -147,6 +147,7 @@ studentSchema.pre("aggregate", function (next) {
 
 studentSchema.methods.isExists = async function (
   email: string,
+
   contactNo: string
 ) {
   const student = await Student.findOne({
