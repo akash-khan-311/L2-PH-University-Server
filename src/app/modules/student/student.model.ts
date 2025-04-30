@@ -1,5 +1,6 @@
 import { Schema, connect, model } from "mongoose";
 import validator from "validator";
+import bcrypt from "bcrypt";
 import {
   TGuardian,
   TLocalGuardian,
@@ -66,6 +67,10 @@ const studentSchema = new Schema<TStudent, StudentModel, studentMethods>({
     type: userNameSchema,
     required: [true, "Your Name Is Required"],
   },
+  password: {
+    type: String,
+    required: [true, "Password Is Required"],
+  },
   gender: {
     type: String,
     enum: {
@@ -111,6 +116,33 @@ const studentSchema = new Schema<TStudent, StudentModel, studentMethods>({
   },
   profileImg: { type: String },
   isActive: { type: String, enum: ["Active", "Blocked"], default: "Active" },
+  isDeleted: { type: Boolean, default: false },
+});
+
+// Save password before hashed the password
+
+studentSchema.pre("save", async function (next) {
+  const user = this;
+  user.password = await bcrypt.hash(user.password, Number(10));
+  next();
+});
+
+// After save password remove the password
+
+studentSchema.post("save", async function (doc: TStudent, next) {
+  (doc.password = ""), next();
+});
+
+// Before find checked the isDeleted
+
+studentSchema.pre("find", function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+studentSchema.pre("aggregate", function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
 });
 
 studentSchema.methods.isExists = async function (

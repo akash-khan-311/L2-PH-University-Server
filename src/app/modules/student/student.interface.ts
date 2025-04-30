@@ -24,6 +24,7 @@ export type TLocalGuardian = {
 
 export type TStudent = {
   name: TUserName;
+  password: string;
   gender: "male" | "female" | "other";
   dateOfBirth?: string;
   contactNo: string;
@@ -36,6 +37,7 @@ export type TStudent = {
   email: string;
   profileImg?: string;
   isActive?: "Active" | "Blocked";
+  isDeleted: boolean;
 };
 
 export type studentMethods = {

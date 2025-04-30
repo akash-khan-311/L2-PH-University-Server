@@ -77,6 +77,13 @@ export const studentValidationSchema = z.object({
     required_error: "Gender is required",
     invalid_type_error: "Gender must be 'male' or 'female'",
   }),
+  password: z
+    .string({ required_error: "Password is required" })
+    .min(6, { message: "Password must be at least 6 characters long" }),
+  // .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/, {
+  //   message:
+  //     "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+  // }),
   dateOfBirth: z.string().optional(),
   email: z.string().email({ message: "Invalid email address" }),
   contactNo: z
@@ -102,6 +109,7 @@ export const studentValidationSchema = z.object({
   localGuardian: localGuardianValidationSchema,
   profileImg: z.string().url().optional(),
   isActive: z.enum(["Active", "Blocked"]).optional(),
+  isDeleted: z.boolean().optional().default(false),
 });
 
 export default studentValidationSchema;

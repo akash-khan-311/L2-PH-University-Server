@@ -17,7 +17,6 @@ const createStudent = async (req: Request, res: Response) => {
       });
     }
   } catch (error: any) {
-    console.log(error.message || "Error creating student:", error);
     res.status(500).json({ message: error.message || "Internal Server Error" });
   }
 };
@@ -57,8 +56,26 @@ const getSingleStudent = async (req: Request, res: Response) => {
   }
 };
 
+const deleteStudent = async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  try {
+    const result = await StudentServices.deleteStudentFromDb(id);
+    if (result) {
+      res.status(200).json({
+        success: true,
+        message: "Student deleted successfully",
+        data: result,
+      });
+    }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message || "Internal Server Error" });
+  }
+};
+
 export const StudentController = {
   createStudent,
   getAllStudents,
   getSingleStudent,
+  deleteStudent,
 };
