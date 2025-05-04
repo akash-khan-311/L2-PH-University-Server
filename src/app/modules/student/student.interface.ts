@@ -41,6 +41,7 @@ export type TStudent = {
 };
 
 export type studentMethods = {
+  // eslint-disable-next-line no-unused-vars
   isExists(email: string, contactNo: string): Promise<TStudent | null>;
 };
 
