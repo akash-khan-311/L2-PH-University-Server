@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { TUser } from "./user.interface";
+import bcrypt from "bcrypt";
 
 const userSchema = new Schema<TUser>(
   {
@@ -9,7 +10,7 @@ const userSchema = new Schema<TUser>(
     },
     password: {
       type: String,
-      required: true,
+      required: [true, "Password Is Required"],
     },
     needsPasswordChange: {
       type: Boolean,
@@ -22,6 +23,7 @@ const userSchema = new Schema<TUser>(
     status: {
       type: String,
       enum: ["in-progress", "blocked"],
+      default: "in-progress",
     },
     isDeleted: {
       type: Boolean,
@@ -32,6 +34,20 @@ const userSchema = new Schema<TUser>(
     timestamps: true,
   }
 );
+
+// Save password before hashed the password
+
+userSchema.pre("save", async function (next) {
+  const user = this;
+  user.password = await bcrypt.hash(user.password, Number(10));
+  next();
+});
+
+// After save password remove the password
+
+userSchema.post("save", async function (doc: TUser, next) {
+  (doc.password = ""), next();
+});
 
 const User = model<TUser>("User", userSchema);
 

@@ -72,6 +72,7 @@ const localGuardianValidationSchema = z.object({
 
 // 🧑‍🎓 Main Student schema
 export const studentValidationSchema = z.object({
+  id: z.string({ required_error: "ID is required" }),
   name: userNameValidationSchema,
   gender: z.enum(["male", "female", "other"], {
     required_error: "Gender is required",

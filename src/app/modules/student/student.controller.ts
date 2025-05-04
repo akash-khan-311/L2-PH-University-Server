@@ -1,26 +1,30 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { StudentServices } from "./student.service";
-import studentValidationSchema from "./student.validation";
+// import studentValidationSchema from "./student.validation";
 
-const createStudent = async (req: Request, res: Response) => {
-  try {
-    const studentData = req.body.student;
-    const validatedStudentData = studentValidationSchema.parse(studentData);
-    const result =
-      await StudentServices.createStudentIntoDB(validatedStudentData);
-    if (result) {
-      res.status(201).json({
-        success: true,
-        message: "Student created successfully",
-        data: result,
-      });
-    }
-  } catch (error: any) {
-    res.status(500).json({ message: error.message || "Internal Server Error" });
-  }
-};
+// const createStudent = async (req: Request, res: Response) => {
+//   try {
+//     const studentData = req.body.student;
+//     const validatedStudentData = studentValidationSchema.parse(studentData);
+//     const result =
+//       await StudentServices.createStudentIntoDB(validatedStudentData);
+//     if (result) {
+//       res.status(201).json({
+//         success: true,
+//         message: "Student created successfully",
+//         data: result,
+//       });
+//     }
+//   } catch (error: any) {
+//     res.status(500).json({ message: error.message || "Internal Server Error" });
+//   }
+// };
 
-const getAllStudents = async (req: Request, res: Response) => {
+const getAllStudents = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const result = await StudentServices.getAllStudentsFromDB();
     if (result) {
@@ -31,11 +35,15 @@ const getAllStudents = async (req: Request, res: Response) => {
       });
     }
   } catch (error) {
-    res.status(500).json({ message: "Internal Server Error", error });
+    next(error);
   }
 };
 
-const getSingleStudent = async (req: Request, res: Response) => {
+const getSingleStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const id = req.params.id;
     const result = await StudentServices.getSingleStudentFromDB(id);
@@ -49,11 +57,15 @@ const getSingleStudent = async (req: Request, res: Response) => {
       res.status(404).json({ message: "Student not found" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Internal Server Error", error });
+    next(error);
   }
 };
 
-const deleteStudent = async (req: Request, res: Response) => {
+const deleteStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const id = req.params.id;
 
   try {
@@ -66,10 +78,7 @@ const deleteStudent = async (req: Request, res: Response) => {
       });
     }
   } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message || "Internal Server Error",
-    });
+    next(error);
   }
 };
 
@@ -93,7 +102,7 @@ const updateStudent = async (req: Request, res: Response) => {
 };
 
 export const StudentController = {
-  createStudent,
+  // createStudent,
   getAllStudents,
   getSingleStudent,
   deleteStudent,
