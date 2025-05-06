@@ -71,46 +71,51 @@ const localGuardianValidationSchema = z.object({
 });
 
 // 🧑‍🎓 Main Student schema
-export const studentValidationSchema = z.object({
-  id: z.string({ required_error: "ID is required" }),
-  name: userNameValidationSchema,
-  gender: z.enum(["male", "female", "other"], {
-    required_error: "Gender is required",
-    invalid_type_error: "Gender must be 'male' or 'female'",
-  }),
-  password: z
-    .string({ required_error: "Password is required" })
-    .min(6, { message: "Password must be at least 6 characters long" }),
-  // .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/, {
-  //   message:
-  //     "Password must contain at least one uppercase letter, one lowercase letter, and one number",
-  // }),
-  dateOfBirth: z.string().optional(),
-  email: z.string().email({ message: "Invalid email address" }),
-  contactNo: z
-    .string({ required_error: "Contact Number is required" })
-    .regex(digitOnlyRegex, {
-      message: "Father Contact Number must be digits only",
+export const createStudentValidationSchema = z.object({
+  body: z.object({
+    student: z.object({
+      name: userNameValidationSchema,
+      gender: z.enum(["male", "female", "other"], {
+        required_error: "Gender is required",
+        invalid_type_error: "Gender must be 'male' or 'female'",
+      }),
+      password: z
+        .string({ required_error: "Password is required" })
+        .min(6, { message: "Password must be at least 6 characters long" }),
+      // .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/, {
+      //   message:
+      //     "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+      // }),
+      dateOfBirth: z.string().optional(),
+      email: z.string().email({ message: "Invalid email address" }),
+      contactNo: z
+        .string({ required_error: "Contact Number is required" })
+        .regex(digitOnlyRegex, {
+          message: "Father Contact Number must be digits only",
+        }),
+      emergencyContactNo: z
+        .string({
+          required_error: "Emergency Contact Number is required",
+        })
+        .regex(digitOnlyRegex, {
+          message: "Father Contact Number must be digits only",
+        }),
+      bloodGroup: z
+        .enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"])
+        .optional(),
+      presentAddress: z.string({
+        required_error: "Present Address is required",
+      }),
+      permanentAddress: z.string({
+        required_error: "Permanent Address is required",
+      }),
+      guardian: guardianValidationSchema,
+      localGuardian: localGuardianValidationSchema,
+      profileImg: z.string().url().optional(),
     }),
-  emergencyContactNo: z
-    .string({
-      required_error: "Emergency Contact Number is required",
-    })
-    .regex(digitOnlyRegex, {
-      message: "Father Contact Number must be digits only",
-    }),
-  bloodGroup: z
-    .enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"])
-    .optional(),
-  presentAddress: z.string({ required_error: "Present Address is required" }),
-  permanentAddress: z.string({
-    required_error: "Permanent Address is required",
   }),
-  guardian: guardianValidationSchema,
-  localGuardian: localGuardianValidationSchema,
-  profileImg: z.string().url().optional(),
-  isActive: z.enum(["Active", "Blocked"]).optional(),
-  isDeleted: z.boolean().optional().default(false),
 });
 
-export default studentValidationSchema;
+export const Validation = {
+  createStudentValidationSchema,
+};
