@@ -21,6 +21,35 @@ const createSemesterIntoDB = async (payload: TAcademicSemester) => {
   return result;
 };
 
+// Get all semesters
+const getAllSemesterFromDb = async () => {
+  const result = await AcademicSemester.find({});
+  return result;
+};
+
+const getSingleSemesterFromDB = async (id: string) => {
+  const result = await AcademicSemester.findById({ _id: id });
+  return result;
+};
+
+const updateSemesterIntoDB = async (
+  id: string,
+  payload: Partial<TAcademicSemester>
+) => {
+  const isExists = await AcademicSemester.findOne({ _id: id });
+  if (!isExists) {
+    throw new Error("Semester not found");
+  }
+  const result = await AcademicSemester.updateOne({ _id: id }, payload, {
+    new: true,
+    runValidators: true,
+  });
+  return result;
+};
+
 export const AcademicSemesterService = {
   createSemesterIntoDB,
+  getAllSemesterFromDb,
+  getSingleSemesterFromDB,
+  updateSemesterIntoDB,
 };
