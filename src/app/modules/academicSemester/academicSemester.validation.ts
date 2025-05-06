@@ -7,11 +7,10 @@ import {
 
 const academicSemesterValidationSchema = zod.object({
   body: zod.object({
-    name: zod.object({
-      name: zod.enum([...academicSemesterName] as [string, ...string[]]),
-    }),
+    name: zod.enum([...academicSemesterName] as [string, ...string[]]),
+
     code: zod.enum([...academicSemesterCode] as [string, ...string[]]),
-    year: zod.date({
+    year: zod.string({
       required_error: "Year is required",
     }),
     startMonth: zod.enum([...Months] as [string, ...string[]]),
