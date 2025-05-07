@@ -49,7 +49,7 @@ academicSemesterSchema.pre("save", async function (next) {
     const error = new Error(
       `${this.name} semester for year ${this.year} already exists`
     );
-    return next(error); // properly pass the error to next()
+    return next(error);
   }
 
   next();
