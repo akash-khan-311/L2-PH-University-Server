@@ -23,7 +23,7 @@ const getAllAcademicFaculties = catchAsync(async (req, res) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "Semester fetched successfully",
+      message: "Faculties fetched successfully",
       data: result,
     });
   }
@@ -37,14 +37,14 @@ const getSingleAcademicFaculty = catchAsync(async (req, res) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "Semester fetched successfully",
+      message: "Faculty fetched successfully",
       data: result,
     });
   } else {
     sendResponse(res, {
       statusCode: httpStatus.NOT_FOUND,
       success: false,
-      message: "Semester not found",
+      message: "Faculty not found",
     });
   }
 });
@@ -56,11 +56,11 @@ const updateAcademicFaculty = catchAsync(async (req, res) => {
     id,
     updatedData
   );
-  if (result) {
+  if (result.modifiedCount > 0) {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "Semester updated successfully",
+      message: "Department updated successfully",
       data: result,
     });
   }
