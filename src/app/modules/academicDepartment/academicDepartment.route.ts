@@ -15,6 +15,10 @@ router.get("/", AcademicDepartmentController.getAllAcademicDepartment);
 router.get("/:id", AcademicDepartmentController.getSingleAcademicDepartment);
 router.patch(
   "/:id",
-  validateRequest(AcademicFacultyValidation.academicDepartmentValidationSchema),
+  validateRequest(
+    AcademicFacultyValidation.updateAcademicDepartmentValidationSchema
+  ),
   AcademicDepartmentController.updateAcademicDepartment
 );
+
+export const AcademicDepartmentRoutes = router;
