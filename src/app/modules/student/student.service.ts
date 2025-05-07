@@ -1,9 +1,13 @@
+import AppError from "../../errors/AppError";
 import { TStudent } from "./student.interface";
 import { Student } from "./student.model";
 import { Types } from "mongoose";
+import httpStatus from "http-status";
 
 const getAllStudentsFromDB = async () => {
-  const result = await Student.find({});
+  const result = await Student.find({})
+
+    .populate("academicDepartment");
   return result;
 };
 
@@ -26,7 +30,7 @@ const updateStudentFromDb = async (
 ) => {
   const existingStudent = await Student.findOne({ _id: id });
   if (!existingStudent) {
-    throw new Error("Student not found");
+    throw new AppError(httpStatus.NOT_FOUND, "Student not found");
   }
 
   if (updatedData?.email || updatedData?.contactNo) {

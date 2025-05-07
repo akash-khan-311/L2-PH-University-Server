@@ -1,5 +1,7 @@
+import AppError from "../../errors/AppError";
 import { TAcademicDepartment } from "./academicDepartment.interface";
 import { AcademicDepartment } from "./academicDepartment.model";
+import httpStatus from "http-status";
 
 const createAcademicDepartmentIntoDB = async (payload: TAcademicDepartment) => {
   const result = await AcademicDepartment.create(payload);
@@ -7,12 +9,14 @@ const createAcademicDepartmentIntoDB = async (payload: TAcademicDepartment) => {
 };
 
 const getAllAcademicDepartmentsFromDB = async () => {
-  const result = await AcademicDepartment.find({});
+  const result = await AcademicDepartment.find({}).populate("academicFaculty");
   return result;
 };
 
 const singleAcademicDepartmentFromDB = async (id: string) => {
-  const result = await AcademicDepartment.findById({ _id: id });
+  const result = await AcademicDepartment.findById({ _id: id }).populate(
+    "academicFaculty"
+  );
   return result;
 };
 
@@ -22,7 +26,7 @@ const updateAcademicDepartmentIntoDB = async (
 ) => {
   const isExists = await AcademicDepartment.findOne({ _id: id });
   if (!isExists) {
-    throw new Error("Semester not found");
+    throw new AppError(httpStatus.NOT_FOUND, "Department not found 😒");
   }
   const result = await AcademicDepartment.updateOne({ _id: id }, payload, {
     new: true,
