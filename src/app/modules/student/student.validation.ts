@@ -74,6 +74,7 @@ const localGuardianValidationSchema = z.object({
 export const createStudentValidationSchema = z.object({
   body: z.object({
     student: z.object({
+      id: z.string({ required_error: "ID is required" }).optional(),
       name: userNameValidationSchema,
       gender: z.enum(["male", "female", "other"], {
         required_error: "Gender is required",
@@ -111,6 +112,7 @@ export const createStudentValidationSchema = z.object({
       }),
       guardian: guardianValidationSchema,
       localGuardian: localGuardianValidationSchema,
+      admissionSemester: z.string(),
       profileImg: z.string().url().optional(),
     }),
   }),

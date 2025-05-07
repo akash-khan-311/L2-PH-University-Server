@@ -1,20 +1,6 @@
 import { TStudent } from "./student.interface";
 import { Student } from "./student.model";
 import { Types } from "mongoose";
-const createStudentIntoDB = async (studentData: TStudent) => {
-  // Built in static method to create a new document in the collection
-
-  // const result = await StudentModel.create(student);
-  const { email, contactNo } = studentData;
-  const student = new Student(studentData);
-  const studentExists = await student.isExists(email, contactNo);
-  if (studentExists) {
-    throw new Error("Student already exists with this email or contact number");
-  }
-
-  const result = await student.save();
-  return result;
-};
 
 const getAllStudentsFromDB = async () => {
   const result = await Student.find({});
@@ -62,7 +48,6 @@ const updateStudentFromDb = async (
 };
 
 export const StudentServices = {
-  createStudentIntoDB,
   getAllStudentsFromDB,
   getSingleStudentFromDB,
   deleteStudentFromDb,
