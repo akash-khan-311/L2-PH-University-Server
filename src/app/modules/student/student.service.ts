@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
 import AppError from "../../errors/AppError";
 import { TStudent } from "./student.interface";
 import { Student } from "./student.model";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import httpStatus from "http-status";
+import User from "../user/user.model";
 
 const getAllStudentsFromDB = async () => {
   const result = await Student.find({})
@@ -12,15 +14,41 @@ const getAllStudentsFromDB = async () => {
 };
 
 const getSingleStudentFromDB = async (id: string) => {
-  // const result = await Student.findById({ _id: id });
-  const objectId = new Types.ObjectId(id);
-  const result = await Student.aggregate([{ $match: { _id: objectId } }]);
+  const result = await Student.findById({ id });
+
   return result;
 };
 const deleteStudentFromDb = async (id: string) => {
-  const options = { isDeleted: true };
-  const result = await Student.updateOne({ _id: id }, options);
-  return result;
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const options = { isDeleted: true };
+    const deletedStudent = await Student.findOneAndUpdate({ id }, options, {
+      new: true,
+      session,
+    });
+    if (!deletedStudent) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Student not found");
+    }
+
+    const deletedUser = await User.findOneAndUpdate({ id }, options, {
+      new: true,
+      session,
+    });
+
+    if (!deletedUser) {
+      throw new AppError(httpStatus.BAD_REQUEST, "User not found");
+    }
+    await session.commitTransaction();
+    await session.endSession();
+    return deletedStudent;
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new AppError(httpStatus.BAD_REQUEST, "Failed to delete student");
+  }
 };
 
 // update student details by id
@@ -39,7 +67,8 @@ const updateStudentFromDb = async (
       $or: [{ email: updatedData.email }, { contactNo: updatedData.contactNo }],
     });
     if (duplicate) {
-      throw new Error(
+      throw new AppError(
+        httpStatus.CONFLICT,
         "Student already exists with this email or contact number"
       );
     }
