@@ -2,7 +2,7 @@ import { z } from "zod";
 const digitOnlyRegex = /^[0-9]+$/;
 const nameRegex = /^[A-Za-z\s'-]+$/;
 // 🔠 Nested Name schema
-const userNameValidationSchema = z.object({
+const createUserNameValidationSchema = z.object({
   firstName: z
     .string({ required_error: "First Name is required" })
     .regex(nameRegex, {
@@ -17,7 +17,7 @@ const userNameValidationSchema = z.object({
 });
 
 // 👨‍👩‍👧 Guardian schema
-const guardianValidationSchema = z.object({
+const createGuardianValidationSchema = z.object({
   fatherName: z
     .string({ required_error: "Father Name is required" })
     .regex(nameRegex, {
@@ -51,7 +51,7 @@ const guardianValidationSchema = z.object({
 });
 
 // 👥 Local Guardian schema
-const localGuardianValidationSchema = z.object({
+const createLocalGuardianValidationSchema = z.object({
   name: z
     .string({ required_error: "Local Guardian Name is required" })
     .regex(nameRegex, {
@@ -75,7 +75,7 @@ export const createStudentValidationSchema = z.object({
   body: z.object({
     student: z.object({
       id: z.string({ required_error: "ID is required" }).optional(),
-      name: userNameValidationSchema,
+      name: createUserNameValidationSchema,
       gender: z.enum(["male", "female", "other"], {
         required_error: "Gender is required",
         invalid_type_error: "Gender must be 'male' or 'female'",
@@ -110,14 +110,44 @@ export const createStudentValidationSchema = z.object({
       permanentAddress: z.string({
         required_error: "Permanent Address is required",
       }),
-      guardian: guardianValidationSchema,
-      localGuardian: localGuardianValidationSchema,
+      guardian: createGuardianValidationSchema,
+      localGuardian: createLocalGuardianValidationSchema,
       admissionSemester: z.string(),
       profileImg: z.string().url().optional(),
     }),
   }),
 });
 
+export const updateStudentValidationSchema = z.object({
+  body: z.object({
+    student: z
+      .object({
+        id: z.string().optional(),
+        name: createUserNameValidationSchema.partial().optional(),
+        gender: z.enum(["male", "female", "other"]).optional(),
+        password: z
+          .string()
+          .min(6, { message: "Password must be at least 6 characters long" })
+          .optional(),
+        dateOfBirth: z.string().optional(),
+        email: z.string().email().optional(),
+        contactNo: z.string().regex(digitOnlyRegex).optional(),
+        emergencyContactNo: z.string().regex(digitOnlyRegex).optional(),
+        bloodGroup: z
+          .enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"])
+          .optional(),
+        presentAddress: z.string().optional(),
+        permanentAddress: z.string().optional(),
+        guardian: createGuardianValidationSchema.partial().optional(),
+        localGuardian: createLocalGuardianValidationSchema.partial().optional(),
+        admissionSemester: z.string().optional(),
+        profileImg: z.string().url().optional(),
+      })
+      .partial(),
+  }),
+});
+
 export const Validation = {
   createStudentValidationSchema,
+  updateStudentValidationSchema,
 };

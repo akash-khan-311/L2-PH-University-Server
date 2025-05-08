@@ -53,7 +53,6 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
   contactNo: {
     type: String,
     required: [true, "Guardian Contact Number is Required"],
-    unique: true,
   },
   relationship: {
     type: String,

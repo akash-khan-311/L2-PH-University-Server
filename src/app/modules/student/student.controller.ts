@@ -52,8 +52,9 @@ const deleteStudent = catchAsync(async (req, res) => {
 
 const updateStudent = catchAsync(async (req, res) => {
   const id = req.params.id;
-  const updatedData = req.body;
-  const result = await StudentServices.updateStudentFromDb(id, updatedData);
+  const { student } = req.body; // ✅ destructure only the student object
+
+  const result = await StudentServices.updateStudentFromDb(id, student);
   if (result) {
     sendResponse(res, {
       statusCode: httpStatus.OK,
@@ -65,7 +66,7 @@ const updateStudent = catchAsync(async (req, res) => {
     sendResponse(res, {
       statusCode: httpStatus.NOT_FOUND,
       success: false,
-      message: "Student not found",
+      message: "Student not found 😒",
     });
   }
 });
