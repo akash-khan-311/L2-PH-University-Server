@@ -6,7 +6,7 @@ import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
 
 const getAllStudents = catchAsync(async (req, res) => {
-  const result = await StudentServices.getAllStudentsFromDB();
+  const result = await StudentServices.getAllStudentsFromDB(req.query);
   if (result) {
     sendResponse(res, {
       statusCode: httpStatus.OK,
@@ -52,7 +52,7 @@ const deleteStudent = catchAsync(async (req, res) => {
 
 const updateStudent = catchAsync(async (req, res) => {
   const id = req.params.id;
-  const { student } = req.body; // ✅ destructure only the student object
+  const { student } = req.body;
 
   const result = await StudentServices.updateStudentFromDb(id, student);
   if (result) {

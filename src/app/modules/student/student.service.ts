@@ -6,10 +6,18 @@ import mongoose, { Types } from "mongoose";
 import httpStatus from "http-status";
 import User from "../user/user.model";
 import flattenObject from "../../utils/flattenObject";
+import QueryBuilder from "../../builder/QueryBuilder";
+import { studentSearchableFields } from "./student.constant";
 
-const getAllStudentsFromDB = async () => {
-  const result = await Student.find({});
+const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
+  const studentQuery = new QueryBuilder(Student.find(), query)
+    .search(studentSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
 
+  const result = await studentQuery.modelQuery;
   return result;
 };
 
