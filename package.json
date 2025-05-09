@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
-    "start:dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "start:prod": "nodemon ./dist/server.js",
     "start": "node ./dist/server.js",
     "format": "prettier --ignore-path .gitignore --write \"./src**/*.+(js|ts|json)\"",
