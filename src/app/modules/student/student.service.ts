@@ -68,7 +68,7 @@ const updateStudentFromDb = async (id: string, payload: Partial<TStudent>) => {
 
   if (payload?.email || payload?.contactNo) {
     const duplicate = await Student.findOne({
-      id: { $ne: id },
+      _id: { $ne: id },
       $or: [
         ...(payload.email ? [{ email: payload.email }] : []),
         ...(payload.contactNo ? [{ contactNo: payload.contactNo }] : []),
