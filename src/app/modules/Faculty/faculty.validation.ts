@@ -62,7 +62,6 @@ export const updateFacultyValidationSchema = z.object({
 // Create Faculty Validation
 export const createFacultyValidationSchema = z.object({
   body: z.object({
-    id: z.string({ required_error: "ID is required" }),
     user: z.string({ required_error: "User ObjectId is required" }),
     designation: z.string({ required_error: "Designation is required" }),
     name: userNameSchema,
