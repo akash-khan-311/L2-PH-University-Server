@@ -1,96 +1,64 @@
 import { z } from "zod";
+import { BloodGroup, Gender } from "./faculty.constant";
 
-// ENUMS
-const genderEnum = z.enum(["male", "female", "other"]);
-const bloodGroupEnum = z.enum([
-  "A+",
-  "A-",
-  "B+",
-  "B-",
-  "AB+",
-  "AB-",
-  "O+",
-  "O-",
-]);
-const digitOnlyRegex = /^[0-9]+$/;
-const nameRegex = /^[A-Za-z\s'-]+$/;
-
-// Nested Name Schema
-const userNameSchema = z.object({
+const createUserNameValidationSchema = z.object({
   firstName: z
-    .string({ required_error: "First Name is required" })
-    .trim()
-    .max(20, "First Name must be less than 20 characters")
-    .regex(nameRegex, { message: "First Name must contain only letters." }),
-  middleName: z.string().trim().optional(),
-  lastName: z
-    .string({ required_error: "Last Name is required" })
-    .trim()
-    .max(20, "Last Name must be less than 20 characters")
-    .regex(nameRegex, { message: "Last Name must contain only letters." }),
+    .string()
+    .min(1)
+    .max(20)
+    .refine((value) => /^[A-Z]/.test(value), {
+      message: "First Name must start with a capital letter",
+    }),
+  middleName: z.string(),
+  lastName: z.string(),
 });
 
-export const updateFacultyValidationSchema = z.object({
-  body: z
-    .object({
-      id: z.string().optional(),
-      user: z.string().optional(),
-      designation: z.string().optional(),
-      name: userNameSchema.partial().optional(),
-      gender: genderEnum.optional(),
-      dateOfBirth: z.string().optional(),
-      email: z.string().email().optional(),
-      contactNo: z
-        .string()
-        .regex(digitOnlyRegex, { message: "Contact must contain digits only" })
-        .optional(),
-      emergencyContactNo: z
-        .string()
-        .regex(digitOnlyRegex, {
-          message: "Emergency Contact must contain digits only",
-        })
-        .optional(),
-      bloodGroup: bloodGroupEnum.optional(),
-      presentAddress: z.string().optional(),
-      permanentAddress: z.string().optional(),
-      profileImg: z.string().url().optional(),
-      academicDepartment: z.string().optional(),
-    })
-    .partial(),
-});
-
-// Create Faculty Validation
 export const createFacultyValidationSchema = z.object({
   body: z.object({
-    user: z.string({ required_error: "User ObjectId is required" }),
-    designation: z.string({ required_error: "Designation is required" }),
-    name: userNameSchema,
-    gender: genderEnum,
-    dateOfBirth: z.string().optional(), // could be converted to date on backend
-    email: z.string({ required_error: "Email is required" }).email(),
-    contactNo: z
-      .string({ required_error: "Contact Number is required" })
-      .regex(digitOnlyRegex, {
-        message: "Contact Number must contain digits only",
-      }),
-    emergencyContactNo: z
-      .string({ required_error: "Emergency Contact Number is required" })
-      .regex(digitOnlyRegex, {
-        message: "Emergency Contact Number must contain digits only",
-      }),
-    bloodGroup: bloodGroupEnum.optional(),
-    presentAddress: z.string({ required_error: "Present Address is required" }),
-    permanentAddress: z.string({
-      required_error: "Permanent Address is required",
-    }),
-    profileImg: z.string().url().optional(),
-    academicDepartment: z.string({
-      required_error: "Academic Department ID is required",
+    password: z.string().max(20),
+    faculty: z.object({
+      designation: z.string(),
+      name: createUserNameValidationSchema,
+      gender: z.enum([...Gender] as [string, ...string[]]),
+      dateOfBirth: z.string().optional(),
+      email: z.string().email(),
+      contactNo: z.string(),
+      emergencyContactNo: z.string(),
+      bloodGroup: z.enum([...BloodGroup] as [string, ...string[]]),
+      presentAddress: z.string(),
+      permanentAddress: z.string(),
+      academicDepartment: z.string(),
+      profileImg: z.string(),
     }),
   }),
 });
 
-export const FacultyValidation = {
+const updateUserNameValidationSchema = z.object({
+  firstName: z.string().min(1).max(20).optional(),
+  middleName: z.string().optional(),
+  lastName: z.string().optional(),
+});
+
+export const updateFacultyValidationSchema = z.object({
+  body: z.object({
+    faculty: z.object({
+      designation: z.string().optional(),
+      name: updateUserNameValidationSchema,
+      gender: z.enum([...Gender] as [string, ...string[]]).optional(),
+      dateOfBirth: z.string().optional(),
+      email: z.string().email().optional(),
+      contactNo: z.string().optional(),
+      emergencyContactNo: z.string().optional(),
+      bloodGroup: z.enum([...BloodGroup] as [string, ...string[]]).optional(),
+      presentAddress: z.string().optional(),
+      permanentAddress: z.string().optional(),
+      profileImg: z.string().optional(),
+      academicDepartment: z.string().optional(),
+    }),
+  }),
+});
+
+export const studentValidations = {
   createFacultyValidationSchema,
   updateFacultyValidationSchema,
 };
