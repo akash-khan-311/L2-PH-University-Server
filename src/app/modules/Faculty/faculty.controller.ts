@@ -6,26 +6,41 @@ import { FacultyService } from "./faculty.service";
 const getSingleFaculty = catchAsync(async (req, res) => {
   const id = req.params.id;
   const result = await FacultyService.getSingleFacultyFromDB(id);
-  if (result) {
+  if (!result) {
     sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Faculty fetched successfully",
-      data: result,
+      statusCode: httpStatus.NOT_FOUND,
+      success: false,
+      message: "Faculty not found 😒",
+      data: [],
     });
   }
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Faculty fetched successfully",
+    data: result,
+  });
 });
 
 const getallFaculties = catchAsync(async (req, res) => {
   const result = await FacultyService.getAllFacultiesFromDB(req.query);
-  if (result) {
+
+  if (!result) {
     sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Faculties fetched successfully",
-      data: result,
+      statusCode: httpStatus.NOT_FOUND,
+      success: false,
+      message: "Faculties not found 😒",
+      data: [],
     });
   }
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Faculties fetched successfully",
+    data: result,
+  });
 });
 
 const updateFaculty = catchAsync(async (req, res) => {

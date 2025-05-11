@@ -1,6 +1,10 @@
 // year semesterCode 4digit number
+import AppError from "../../errors/AppError";
 import { TAcademicSemester } from "../academicSemester/academicSemester.interface";
 import User from "./user.model";
+import httpStatus from "http-status";
+import bcrypt from "bcrypt";
+
 //=============> Student ID <========== //
 const findLastStudentId = async () => {
   const lastStudent = await User.findOne(
@@ -109,4 +113,26 @@ export const generateAdminId = async () => {
   incrementId = `A-${incrementId}`;
 
   return incrementId;
+};
+
+// Verify user Credentials
+export const verifyUserCredentials = async (id: string, password: string) => {
+  // find the user with password field
+  const user = await User.findOne({ id }).select("+password");
+
+  // user not found
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User Not Found");
+  }
+  // Status Check
+  if (user.status === "blocked") {
+    throw new AppError(httpStatus.BAD_REQUEST, "User blocked");
+  }
+  //  password match
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
+    throw new AppError(httpStatus.FORBIDDEN, "Incorrect Password");
+  }
+
+  return user;
 };

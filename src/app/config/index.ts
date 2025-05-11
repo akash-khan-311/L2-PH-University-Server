@@ -7,4 +7,5 @@ export default {
   port: process.env.PORT || 5000,
   database_url: process.env.DATABASE_URL,
   default_password: process.env.DEFAULT_PASS,
+  access_token_secret: process.env.ACCESS_TOKEN_SECRET,
 };
