@@ -8,4 +8,8 @@ export default {
   database_url: process.env.DATABASE_URL,
   default_password: process.env.DEFAULT_PASS,
   access_token_secret: process.env.ACCESS_TOKEN_SECRET,
+  refresh_token_secret: process.env.REFRESH_TOKEN_SECRET,
+
+  expires_in_refresh_token: process.env.REFRESH_TOKEN_EXPIRES,
+  expires_in_access_token: process.env.ACCESS_TOKEN_EXPIRES,
 };

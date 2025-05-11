@@ -116,22 +116,35 @@ export const generateAdminId = async () => {
 };
 
 // Verify user Credentials
-export const verifyUserCredentials = async (id: string, password: string) => {
-  // find the user with password field
-  const user = await User.findOne({ id }).select("+password");
+export const verifyUserCredentials = async (id: string, password?: string) => {
+  // Find user and include password only if provided
+  const userQuery = User.findOne({ id });
+  if (password) {
+    userQuery.select("+password");
+  }
+  const user = await userQuery;
 
-  // user not found
+  // User not found
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, "User Not Found");
   }
+
+  // if user deleted
+  if (user.isDeleted) {
+    throw new AppError(httpStatus.BAD_REQUEST, "User deleted");
+  }
+
   // Status Check
   if (user.status === "blocked") {
     throw new AppError(httpStatus.BAD_REQUEST, "User blocked");
   }
-  //  password match
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
-    throw new AppError(httpStatus.FORBIDDEN, "Incorrect Password");
+
+  // If password is provided, validate it
+  if (password) {
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new AppError(httpStatus.FORBIDDEN, "Incorrect Password");
+    }
   }
 
   return user;
