@@ -7,6 +7,7 @@ import User from "../user/user.model";
 import httpStatus from "http-status";
 import bcrypt from "bcrypt";
 import { createToken } from "./auth.utils";
+import AppError from "../../errors/AppError";
 const loginUserIntoDB = async (payload: TLoginUser) => {
   // Checking if the user exists or not
 
@@ -63,7 +64,37 @@ const changePasswordIntoDB = async (
   return null;
 };
 
+const refreshToken = async (token: string) => {
+  if (!token) {
+    throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized");
+  }
+
+  // verify token
+  const decoded = jwt.verify(
+    token,
+    config.refresh_token_secret as string
+  ) as JwtPayload;
+
+  const { userId, iat } = decoded;
+
+  const user = await verifyUserCredentials(userId);
+  const jwtPayload = {
+    userId: user.id,
+    role: user.role,
+  };
+
+  const accessToken = createToken(
+    jwtPayload,
+    config.refresh_token_secret as string,
+    config.expires_in_refresh_token as string
+  );
+  return {
+    accessToken,
+  };
+};
+
 export const AuthService = {
   loginUserIntoDB,
   changePasswordIntoDB,
+  refreshToken,
 };

@@ -26,6 +26,8 @@ const getSingleFaculty = catchAsync(async (req, res) => {
 const getallFaculties = catchAsync(async (req, res) => {
   const result = await FacultyService.getAllFacultiesFromDB(req.query);
 
+  // console.log(req.cookies);
+
   if (!result) {
     sendResponse(res, {
       statusCode: httpStatus.NOT_FOUND,
