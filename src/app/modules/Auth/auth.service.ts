@@ -108,7 +108,6 @@ const forgetPassword = async (id: string) => {
   );
 
   const resetUILink = `http://localhost:5000/api/v1?id=${user.id}&token=${resetToken}`;
-  console.log(resetUILink);
 };
 
 export const AuthService = {
