@@ -85,16 +85,35 @@ const refreshToken = async (token: string) => {
 
   const accessToken = createToken(
     jwtPayload,
-    config.refresh_token_secret as string,
-    config.expires_in_refresh_token as string
+    config.access_token_secret as string,
+    config.expires_in_access_token as string
   );
   return {
     accessToken,
   };
 };
 
+const forgetPassword = async (id: string) => {
+  const user = await verifyUserCredentials(id);
+
+  const jwtPayload = {
+    userId: user.id,
+    role: user.role,
+  };
+
+  const resetToken = createToken(
+    jwtPayload,
+    config.refresh_token_secret as string,
+    "5m"
+  );
+
+  const resetUILink = `http://localhost:5000/api/v1?id=${user.id}&token=${resetToken}`;
+  console.log(resetUILink);
+};
+
 export const AuthService = {
   loginUserIntoDB,
   changePasswordIntoDB,
   refreshToken,
+  forgetPassword,
 };
