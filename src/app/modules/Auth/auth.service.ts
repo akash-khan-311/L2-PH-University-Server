@@ -8,6 +8,7 @@ import httpStatus from "http-status";
 import bcrypt from "bcrypt";
 import { createToken } from "./auth.utils";
 import AppError from "../../errors/AppError";
+import { sendEmail } from "../../utils/sendEmail";
 const loginUserIntoDB = async (payload: TLoginUser) => {
   // Checking if the user exists or not
 
@@ -107,7 +108,9 @@ const forgetPassword = async (id: string) => {
     "5m"
   );
 
-  const resetUILink = `http://localhost:5000/api/v1?id=${user.id}&token=${resetToken}`;
+  const resetUILink = `${config.base_url}/api/v1?id=${user.id}&token=${resetToken}`;
+
+  sendEmail(user.email, resetUILink);
 };
 
 export const AuthService = {
