@@ -3,6 +3,7 @@ import config from "../config";
 
 export const sendEmail = async (to: string, text: string) => {
   const transport = nodemailer.createTransport({
+    service: "gmail",
     host: "smtp.gmail.com",
     secure: config.node_env === "production" ? true : false,
     port: 587,

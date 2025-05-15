@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { TLoginUser } from "./auth.interface";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { verifyUserCredentials } from "../user/user.utils";
@@ -42,15 +41,12 @@ const changePasswordIntoDB = async (
   userData: JwtPayload,
   payload: { oldPassword: string; newPassword: string }
 ) => {
-  const user = await verifyUserCredentials(
-    userData.userId,
-    payload.oldPassword
-  );
+  await verifyUserCredentials(userData.userId, payload.oldPassword);
 
   // hashed new password instance
   const hashedPassword = await bcrypt.hash(payload.newPassword, Number(10));
 
-  const result = await User.findOneAndUpdate(
+  await User.findOneAndUpdate(
     {
       id: userData.userId,
       role: userData.role,
@@ -76,7 +72,7 @@ const refreshToken = async (token: string) => {
     config.refresh_token_secret as string
   ) as JwtPayload;
 
-  const { userId, iat } = decoded;
+  const { userId } = decoded;
 
   const user = await verifyUserCredentials(userId);
   const jwtPayload = {
@@ -113,9 +109,38 @@ const forgetPassword = async (id: string) => {
   sendEmail(user.email, resetUILink);
 };
 
+const resetPassword = async (
+  payload: { id: string; newPassword: string },
+  token: any
+) => {
+  const user = await verifyUserCredentials(payload.id);
+
+  const decoded = jwt.verify(
+    token,
+    config.refresh_token_secret as string
+  ) as JwtPayload;
+
+  // console.log(user, decoded);
+  if (decoded.userId !== user.id || decoded.userId !== payload.id) {
+    throw new AppError(httpStatus.FORBIDDEN, "You are Forbidden");
+  }
+  // hashed new password instance
+  const hashedPassword = await bcrypt.hash(payload.newPassword, Number(10));
+
+  await User.findOneAndUpdate(
+    { id: decoded.userId, role: decoded.role },
+    {
+      password: hashedPassword,
+      needsPasswordChange: false,
+      passwordChangeAt: Date.now(),
+    }
+  );
+};
+
 export const AuthService = {
   loginUserIntoDB,
   changePasswordIntoDB,
   refreshToken,
   forgetPassword,
+  resetPassword,
 };
