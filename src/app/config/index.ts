@@ -17,4 +17,8 @@ export default {
   // smtp_port: process.env.SMTP_PORT,
   smtp_username: process.env.SMTP_USERNAME,
   smtp_password: process.env.SMTP_PASSWORD,
+  cloudinary_name: process.env.CLOUDINARY_NAME,
+  cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
+  cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloudinary_url: process.env.CLOUDINARY_URL,
 };

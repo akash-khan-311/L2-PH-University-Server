@@ -82,7 +82,8 @@ export const createStudentValidationSchema = z.object({
       }),
       password: z
         .string({ required_error: "Password is required" })
-        .min(6, { message: "Password must be at least 6 characters long" }),
+        .min(6, { message: "Password must be at least 6 characters long" })
+        .optional(),
       // .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/, {
       //   message:
       //     "Password must contain at least one uppercase letter, one lowercase letter, and one number",
