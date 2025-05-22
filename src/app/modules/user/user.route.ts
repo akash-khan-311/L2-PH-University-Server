@@ -11,7 +11,7 @@ import { upload } from "../../utils/sendImageToCloudinary";
 const router = express.Router();
 router.post(
   "/create-admin",
-
+  auth(USER_ROLE.superAdmin),
   validateRequest(AdminValidations.createAdminValidationSchema),
   UserControllers.createAdmin
 );
